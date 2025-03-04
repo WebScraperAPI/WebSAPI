@@ -7,14 +7,14 @@ app = Flask(__name__)
 
 def scrape_quotes(page=1):
     """
-    Scrapes quotes from quotes.toscrape.com for the given page number.
-    Returns a list of dictionaries: [{text, author, tags:[]}, ...].
+    Scrapes quotes from quotes.toscrape.com for the specified page.
+    Returns a list of dicts with 'text', 'author', and 'tags'.
     """
     url = f"http://quotes.toscrape.com/page/{page}/"
     resp = requests.get(url)
     resp.raise_for_status()
 
-    soup = BeautifulSoup(resp.text, 'html.parser')
+    soup = BeautifulSoup(resp.text, "html.parser")
     quote_divs = soup.find_all("div", class_="quote")
 
     results = []
@@ -37,24 +37,19 @@ def scrape_quotes(page=1):
 @app.route("/scrape_quotes", methods=["POST"])
 def scrape_quotes_endpoint():
     """
-    Expects JSON input: { "page": <int> }
-    Returns JSON array of quotes:
+    Expects JSON: {"page": 2}
+    Returns an array of quotes:
     [
-      {
-        "text": "...",
-        "author": "...",
-        "tags": ["tag1", "tag2"]
-      },
+      { "text": "...", "author": "...", "tags": [...] },
       ...
     ]
     """
     data = request.get_json()
     page = data.get("page", 1)
-    quotes = scrape_quotes(page=page)
+    quotes = scrape_quotes(page)
     return jsonify(quotes)
 
 if __name__ == "__main__":
-    # Render provides the PORT environment variable. Default to 5000 locally if not set.
+    # Render will set PORT; locally default to 5000
     port = int(os.environ.get("PORT", 5000))
-    # Listen on 0.0.0.0 to be accessible externally.
     app.run(host="0.0.0.0", port=port, debug=False)
