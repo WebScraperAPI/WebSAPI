@@ -34,7 +34,7 @@ def scrape_quotes(page=1):
         })
     return results
 
-@app.route("/scrape_quotes", methods=["POST"])
+@app.route("/WEBS", methods=["POST"])
 def scrape_quotes_endpoint():
     """
     Expects JSON: {"page": 2}
